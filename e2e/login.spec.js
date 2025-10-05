@@ -16,5 +16,6 @@ test.describe('The login page', () => {
   test('allow to login', async () => {
     await loginPage.typeUserName('Admin');
     await loginPage.typePassword('admin123');
+    await loginPage.clickLogin();
   });
 });

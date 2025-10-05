@@ -10,8 +10,17 @@ export class LoginPageActions {
     await this.page.locator(this.locators.username).fill(username);
   }
 
-    async typePassword(password) {
+  async typePassword(password) {
     await this.page.locator(this.locators.password).fill(password);
   }
-}
 
+  async clickLogin() {
+    await this.page.locator(this.locators.submit).click();
+  }
+
+  async login(username, password) {
+    await this.typeUserName(username);
+    await this.typePassword(password);
+    await this.clickLogin();
+  }
+}
