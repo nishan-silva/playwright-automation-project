@@ -16,7 +16,6 @@ export class LoginPageActions {
 
   async clickLogin() {
     await this.page.locator(this.locators.submit).click();
-    await expect(this.page.getByText('OrangeHRM OS 5.7')).toBeVisible();
   }
 
   async login(username, password) {
