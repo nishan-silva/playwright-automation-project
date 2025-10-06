@@ -56,7 +56,7 @@ jobs:
 
       - name: Run Playwright tests
         env:
-          # If you use GitHub Environments (DEV/STAGING/PROD), put a secret named BASE_URL in each.
+          # If use GitHub Environments (DEV/STAGING/PROD), put a secret named BASE_URL in each.
           BASE_URL: ${{ secrets.BASE_URL }}
 
           # Alternative (repo-level secrets per env):
