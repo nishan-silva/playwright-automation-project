@@ -1,16 +1,33 @@
 name: Playwright Tests
+
 on:
   schedule:
-    - cron: "00 00 * * *"
+    - cron: "00 00 * * *"   # UTC midnight
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        default: STAGING
+        options: [DEV, STAGING, PROD]
+      workers:
+        description: "Playwright workers (parallelism)"
+        required: false
+        default: "4"
+        type: number
+      project:
+        description: "Playwright project (browser)"
+        required: false
+        default: chromium
+        type: choice
+        options: [chromium, firefox, webkit]
 
-# Required for GitHub Pages publishing
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Prevent concurrent deploys
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -20,7 +37,10 @@ jobs:
     name: Run Playwright Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment: STAGING
+
+    # Use the selected environment so its environment-scoped secrets are available.
+    environment: ${{ inputs.environment || 'STAGING' }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -36,10 +56,17 @@ jobs:
 
       - name: Run Playwright tests
         env:
+          # If you use GitHub Environments (DEV/STAGING/PROD), put a secret named BASE_URL in each.
           BASE_URL: ${{ secrets.BASE_URL }}
-        run: npx playwright test --project=chromium --reporter=html
 
-      # Package the HTML report as a Pages artifact
+          # Alternative (repo-level secrets per env):
+          # BASE_URL: ${{ secrets[format('BASE_URL_{0}', (inputs.environment || 'STAGING'))] }}
+        run: >
+          npx playwright test
+          --project=${{ inputs.project || 'chromium' }}
+          --workers=${{ inputs.workers || '4' }}
+          --reporter=html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
