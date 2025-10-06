@@ -38,29 +38,23 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
-    # Use the selected environment so its environment-scoped secrets are available.
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.1-jammy
+      options: --ipc=host
+
+    # Use the selected environment so its environment-scoped secrets are available
     environment: ${{ inputs.environment || 'STAGING' }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
       - name: Install dependencies
         run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
 
       - name: Run Playwright tests
         env:
           # If use GitHub Environments (DEV/STAGING/PROD), put a secret named BASE_URL in each.
           BASE_URL: ${{ secrets.BASE_URL }}
-
-          # Alternative (repo-level secrets per env):
-          # BASE_URL: ${{ secrets[format('BASE_URL_{0}', (inputs.environment || 'STAGING'))] }}
         run: >
           npx playwright test
           --project=${{ inputs.project || 'chromium' }}
