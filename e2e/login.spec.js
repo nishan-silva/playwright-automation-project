@@ -9,7 +9,7 @@ test.describe('Login page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     loginPage = new LoginPageActions(page); // Create instance per test
-    data = loginData; // Load once before all tests
+    data = loginData; // Load once before all tests test
   });
 
   test('should log in successfully with valid credentials', async () => {
